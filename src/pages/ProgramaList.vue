@@ -44,16 +44,19 @@
 <script>
 import axios from "axios";
 
+var axiosInstance = axios.create({
+  // baseURL: "http://localhost:8080/public/api",
+  baseURL: "http://estudos-api.marcelomesquita.com/api",
+});
+
 export default {
   name: "ProgramaList",
   methods: {
     getProgramas() {
       this.loading.programas = true;
 
-      var url = "http://localhost:8080/public/api/programas";
-
-      axios
-        .get(url)
+      axiosInstance
+        .get("/programas")
         .then((response) => {
           this.programas = response.data.programas;
         })

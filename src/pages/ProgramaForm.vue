@@ -83,6 +83,11 @@
 import axios from "axios";
 import CheckboxRecursivo from "../components/CheckboxRecursivo";
 
+var axiosInstance = axios.create({
+  // baseURL: "http://localhost:8080/public/api",
+  baseURL: "http://estudos-api.marcelomesquita.com/api",
+});
+
 export default {
   name: "ProgramaForm",
   components: {
@@ -92,10 +97,8 @@ export default {
     getAssuntos() {
       this.loading.assuntos = true;
 
-      var url = "http://localhost:8080/public/api/assuntos";
-
-      axios
-        .get(url)
+      axiosInstance
+        .get("/assuntos")
         .then((response) => {
           this.assuntos = response.data.assuntos;
         })
@@ -105,10 +108,8 @@ export default {
     getBancas() {
       this.loading.bancas = true;
 
-      var url = "http://localhost:8080/public/api/bancas";
-
-      axios
-        .get(url)
+      axiosInstance
+        .get("/bancas")
         .then((response) => {
           this.bancas = response.data.bancas;
         })
@@ -118,10 +119,8 @@ export default {
     getOrgaos() {
       this.loading.orgaos = true;
 
-      var url = "http://localhost:8080/public/api/orgaos";
-
-      axios
-        .get(url)
+      axiosInstance
+        .get("orgaos")
         .then((response) => {
           this.orgaos = response.data.orgaos;
         })
@@ -132,10 +131,8 @@ export default {
       this.erro = "";
       this.loading.programa = true;
 
-      var url = "http://localhost:8080/public/api/programas/cadastrar";
-
-      axios
-        .post(url, {
+      axiosInstance
+        .post("/programas/cadastrar", {
           nome: programa.nome,
           banca_id: programa.banca_id,
           orgao_id: programa.orgao_id,
