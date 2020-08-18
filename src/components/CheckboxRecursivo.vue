@@ -5,7 +5,7 @@
       type="checkbox"
       v-bind:id="'assunto' + assunto.id"
       v-bind:value="assunto.id"
-      v-model="programa.idAssuntos"
+      v-model="programa.assuntos"
     />
     <label v-bind:for="'assunto' + assunto.id" class="form-check-label">
       {{ assunto.nome }}

@@ -84,8 +84,8 @@ import axios from "axios";
 import CheckboxRecursivo from "../components/CheckboxRecursivo";
 
 var axiosInstance = axios.create({
-  // baseURL: "http://localhost:8080/public/api",
-  baseURL: "http://estudos-api.marcelomesquita.com/api",
+  baseURL: "http://localhost:8080/public/api",
+  // baseURL: "http://estudos-api.marcelomesquita.com/api",
 });
 
 export default {
@@ -96,9 +96,13 @@ export default {
   methods: {
     getAssuntos() {
       this.loading.assuntos = true;
+      this.assuntos = [];
 
       axiosInstance
-        .get("/assuntos")
+        .get("/assuntos", {
+          banca_id: this.programa.banca_id,
+          orgao_id: this.programa.orgao_id,
+        })
         .then((response) => {
           this.assuntos = response.data.assuntos;
         })
@@ -136,7 +140,7 @@ export default {
           nome: programa.nome,
           banca_id: programa.banca_id,
           orgao_id: programa.orgao_id,
-          assuntos: programa.idAssuntos,
+          assuntos: programa.assuntos,
         })
         .then((response) => {
           console.log(response);
@@ -151,10 +155,17 @@ export default {
         .finally(() => (this.loading.programa = false));
     },
   },
-  created() {
-    this.getAssuntos();
-    this.getBancas();
-    this.getOrgaos();
+  watch: {
+    "programa.banca_id": function (newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.getAssuntos();
+      }
+    },
+    "programa.orgao_id": function (newValue, oldValue) {
+      if (newValue != oldValue) {
+        this.getAssuntos();
+      }
+    },
   },
   data() {
     return {
@@ -167,14 +178,19 @@ export default {
       erro: "",
       programa: {
         nome: "",
-        idOrgao: 0,
-        idBanca: 0,
-        idAssuntos: [],
+        banca_id: 0,
+        orgao_id: 0,
+        assuntos: [],
       },
       orgaos: [],
       bancas: [],
       assuntos: [],
     };
+  },
+  created() {
+    this.getAssuntos();
+    this.getBancas();
+    this.getOrgaos();
   },
 };
 </script>

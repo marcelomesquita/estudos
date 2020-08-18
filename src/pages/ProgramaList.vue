@@ -45,8 +45,8 @@
 import axios from "axios";
 
 var axiosInstance = axios.create({
-  // baseURL: "http://localhost:8080/public/api",
-  baseURL: "http://estudos-api.marcelomesquita.com/api",
+  baseURL: "http://localhost:8080/public/api",
+  // baseURL: "http://estudos-api.marcelomesquita.com/api",
 });
 
 export default {
