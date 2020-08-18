@@ -99,10 +99,12 @@ export default {
       this.assuntos = [];
 
       axiosInstance
-        .get("/assuntos", {
-          banca_id: this.programa.banca_id,
-          orgao_id: this.programa.orgao_id,
-        })
+        .get(
+          "/assuntos?banca_id=" +
+            this.programa.banca_id +
+            "&orgao_id=" +
+            this.programa.orgao_id
+        )
         .then((response) => {
           this.assuntos = response.data.assuntos;
         })
