@@ -13,7 +13,7 @@
     >{{ assunto.nome }} {{ assunto.total }}</label>
 
     <checkbox-recursivo
-      v-for="filho in assunto.filhos"
+      v-for="filho in assunto.assuntos"
       v-bind:key="filho.id"
       :assunto="filho"
       :programa="programa"

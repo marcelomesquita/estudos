@@ -1,12 +1,14 @@
 <template>
-  <form v-on:submit.prevent="addProgram(program)">
+  <form v-on:submit.prevent="salvarPrograma(programa)">
     <h1 class="h3">Programa</h1>
+
+    <div class="alert alert-danger text-center" role="alert" v-if="erro">{{ erro }}</div>
 
     <div class="row">
       <div class="col-6">
         <div class="form-group">
           <label for="nome">Nome</label>
-          <input type="text" class="form-control" id="nome" v-model="programa.nome" />
+          <input type="text" class="form-control" id="nome" autofocus v-model="programa.nome" />
         </div>
         <div class="form-group">
           <span
@@ -16,8 +18,12 @@
             v-if="loading.orgaos"
           ></span>
           <label for="organ">Órgão</label>
-          <select class="form-control" id="orgao" v-model="programa.idOrgao">
-            <option v-for="orgao in orgaos" v-bind:key="orgao.id">{{ orgao.nome }}</option>
+          <select class="form-control" id="orgao" v-model="programa.orgao_id">
+            <option
+              v-for="orgao in orgaos"
+              v-bind:key="orgao.id"
+              v-bind:value="orgao.id"
+            >{{ orgao.nome }}</option>
           </select>
         </div>
         <div class="form-group">
@@ -28,8 +34,12 @@
             v-if="loading.bancas"
           ></span>
           <label for="nome">Banca</label>
-          <select class="form-control" id="banca" v-model="programa.idBanca">
-            <option v-for="banca in bancas" v-bind:key="banca.id">{{ banca.nome }}</option>
+          <select class="form-control" id="banca" v-model="programa.banca_id">
+            <option
+              v-for="banca in bancas"
+              v-bind:key="banca.id"
+              v-bind:value="banca.id"
+            >{{ banca.nome }}</option>
           </select>
         </div>
       </div>
@@ -41,16 +51,28 @@
           v-if="loading.assuntos"
         ></span>
         <label>Assuntos</label>
-        <checkbox-recursivo
-          v-for="assunto in assuntos"
-          v-bind:key="assunto.id"
-          :assunto="assunto"
-          :programa="programa"
-        ></checkbox-recursivo>
+        <div class="card" style="height: 210px; overflow: auto">
+          <div class="card-body">
+            <checkbox-recursivo
+              v-for="assunto in assuntos"
+              v-bind:key="assunto.id"
+              :assunto="assunto"
+              :programa="programa"
+            ></checkbox-recursivo>
+          </div>
+        </div>
       </div>
       <div class="col-12">
         <div class="form-group">
-          <button type="submit" class="btn btn-primary" v-on:click="salvarPrograma(programa)">Salvar</button>
+          <button type="submit" class="btn btn-primary" :disabled="loading.programa">
+            Salvar
+            <span
+              class="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+              v-if="loading.programa"
+            ></span>
+          </button>
         </div>
       </div>
     </div>
@@ -107,9 +129,29 @@ export default {
         .finally(() => (this.loading.orgaos = false));
     },
     salvarPrograma(programa) {
-      console.log(programa);
+      this.erro = "";
+      this.loading.programa = true;
 
-      this.$router.push("/");
+      var url = "http://localhost:8080/public/api/programas/cadastrar";
+
+      axios
+        .post(url, {
+          nome: programa.nome,
+          banca_id: programa.banca_id,
+          orgao_id: programa.orgao_id,
+          assuntos: programa.idAssuntos,
+        })
+        .then((response) => {
+          console.log(response);
+
+          this.$router.push("/");
+        })
+        .catch((error) => {
+          console.log(error.response);
+
+          this.erro = error.response.data.mensagem;
+        })
+        .finally(() => (this.loading.programa = false));
     },
   },
   created() {
@@ -123,7 +165,9 @@ export default {
         assuntos: false,
         bancas: false,
         orgaos: false,
+        programa: false,
       },
+      erro: "",
       programa: {
         nome: "",
         idOrgao: 0,

@@ -11,7 +11,13 @@
         </div>
 
         <div v-if="!loading.programas">
-          <table class="table">
+          <div
+            class="alert alert-light text-center"
+            role="alert"
+            v-if="programas.length == 0"
+          >Nenhum programa encontrado</div>
+
+          <table class="table" v-if="programas.length > 0">
             <thead>
               <tr>
                 <th scope="col">#</th>
