@@ -1,5 +1,7 @@
 <template>
   <form v-on:submit.prevent="addProgram(program)">
+    <h1 class="h3">Programa</h1>
+
     <div class="row">
       <div class="col-6">
         <div class="form-group">
@@ -7,12 +9,24 @@
           <input type="text" class="form-control" id="nome" v-model="programa.nome" />
         </div>
         <div class="form-group">
+          <span
+            class="spinner-border spinner-border-sm float-right"
+            role="status"
+            aria-hidden="true"
+            v-if="loading.orgaos"
+          ></span>
           <label for="organ">Órgão</label>
           <select class="form-control" id="orgao" v-model="programa.idOrgao">
             <option v-for="orgao in orgaos" v-bind:key="orgao.id">{{ orgao.nome }}</option>
           </select>
         </div>
         <div class="form-group">
+          <span
+            class="spinner-border spinner-border-sm float-right"
+            role="status"
+            aria-hidden="true"
+            v-if="loading.bancas"
+          ></span>
           <label for="nome">Banca</label>
           <select class="form-control" id="banca" v-model="programa.idBanca">
             <option v-for="banca in bancas" v-bind:key="banca.id">{{ banca.nome }}</option>
@@ -20,6 +34,12 @@
         </div>
       </div>
       <div class="col-6">
+        <span
+          class="spinner-border spinner-border-sm float-right"
+          role="status"
+          aria-hidden="true"
+          v-if="loading.assuntos"
+        ></span>
         <label>Assuntos</label>
         <checkbox-recursivo
           v-for="assunto in assuntos"
@@ -38,88 +58,82 @@
 </template>
 
 <script>
+import axios from "axios";
 import CheckboxRecursivo from "../components/CheckboxRecursivo";
 
 export default {
-  name: "App",
+  name: "ProgramaForm",
   components: {
     CheckboxRecursivo,
   },
+  methods: {
+    getAssuntos() {
+      this.loading.assuntos = true;
+
+      var url = "http://localhost:8080/public/api/assuntos";
+
+      axios
+        .get(url)
+        .then((response) => {
+          this.assuntos = response.data.assuntos;
+        })
+        .catch((error) => console.error(error))
+        .finally(() => (this.loading.assuntos = false));
+    },
+    getBancas() {
+      this.loading.bancas = true;
+
+      var url = "http://localhost:8080/public/api/bancas";
+
+      axios
+        .get(url)
+        .then((response) => {
+          this.bancas = response.data.bancas;
+        })
+        .catch((error) => console.error(error))
+        .finally(() => (this.loading.bancas = false));
+    },
+    getOrgaos() {
+      this.loading.orgaos = true;
+
+      var url = "http://localhost:8080/public/api/orgaos";
+
+      axios
+        .get(url)
+        .then((response) => {
+          this.orgaos = response.data.orgaos;
+        })
+        .catch((error) => console.error(error))
+        .finally(() => (this.loading.orgaos = false));
+    },
+    salvarPrograma(programa) {
+      console.log(programa);
+
+      this.$router.push("/");
+    },
+  },
+  created() {
+    this.getAssuntos();
+    this.getBancas();
+    this.getOrgaos();
+  },
   data() {
     return {
+      loading: {
+        assuntos: false,
+        bancas: false,
+        orgaos: false,
+      },
       programa: {
         nome: "",
         idOrgao: 0,
         idBanca: 0,
         idAssuntos: [],
       },
-      orgaos: [
-        {
-          id: 1,
-          nome: "Orgao 1",
-        },
-        {
-          id: 2,
-          nome: "Orgao 2",
-        },
-        {
-          id: 3,
-          nome: "Orgao 3",
-        },
-      ],
-      bancas: [
-        {
-          id: 1,
-          nome: "Banca 1",
-        },
-        {
-          id: 2,
-          nome: "Banca 2",
-        },
-        {
-          id: 3,
-          nome: "Banca 3",
-        },
-      ],
-      assuntos: [
-        {
-          id: 1,
-          nome: "Assunto 1",
-          filhos: [
-            {
-              id: 4,
-              nome: "Assunto 4",
-            },
-            {
-              id: 5,
-              nome: "Assunto 5",
-            },
-          ],
-        },
-        {
-          id: 2,
-          nome: "Assunto 2",
-          filhos: [],
-        },
-        {
-          id: 3,
-          nome: "Assunto 3",
-          filhos: [
-            {
-              id: 6,
-              nome: "Assunto 6",
-            },
-          ],
-        },
-      ],
+      orgaos: [],
+      bancas: [],
+      assuntos: [],
     };
-  },
-  methods: {
-    salvarPrograma(programa) {
-      console.log(programa);
-
-      this.$router.push("/");
-    },
   },
 };
 </script>

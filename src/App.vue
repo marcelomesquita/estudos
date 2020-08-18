@@ -5,8 +5,6 @@
     </nav>
 
     <div class="container-fluid">
-      <h1 class="h3">Programas</h1>
-
       <router-view />
     </div>
   </main>

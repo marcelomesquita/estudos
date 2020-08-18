@@ -7,7 +7,10 @@
       v-bind:value="assunto.id"
       v-model="programa.idAssuntos"
     />
-    <label v-bind:for="'assunto' + assunto.id" class="form-check-label">{{ assunto.nome }}</label>
+    <label
+      v-bind:for="'assunto' + assunto.id"
+      class="form-check-label"
+    >{{ assunto.nome }} {{ assunto.total }}</label>
 
     <checkbox-recursivo
       v-for="filho in assunto.filhos"
